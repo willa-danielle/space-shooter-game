@@ -142,23 +142,47 @@ def shootIfNeeded(event):
     if event.key==K_SPACE:
         shipBullets.append([locateShipGunX(), locateShipGunY()]) #adds a bullet in the appropriate coordinates on pressing spacebar
 
-def nullifyDirectionIfNeeded(event):
+def keyIsLeft(key):
+    if (key==K_LEFT or key==K_a):
+        return True
+    else:
+        return False
+
+def keyIsRight(key):
+    if (key==K_RIGHT or key==K_d):
+        return True
+    else:
+        return False
+
+def keyIsUp(key):
+    if (key==K_UP or key==K_w):
+        return True
+    else:
+        return False
+
+def keyIsDown(key):
+    if (key==K_DOWN or key==K_s):
+        return True
+    else:
+        return False
+
+def stopShipIfNeeded(event):
     global direction
-    if (((event.key==K_DOWN or event.key==K_s) and direction==DOWN) #if user presses a 2nd arrow before releasing 1st arrow, should not stop
-        or ((event.key==K_UP or event.key==K_w) and direction==UP)
-        or ((event.key==K_RIGHT or event.key==K_d) and direction==RIGHT)
-        or ((event.key==K_LEFT or event.key==K_a) and direction==LEFT)):
+    if ((keyIsDown(event.key) and direction==DOWN) #if user presses a 2nd arrow before releasing 1st arrow, should not stop
+        or (keyIsUp(event.key) and direction==UP)
+        or (keyIsRight(event.key) and direction==RIGHT)
+        or (keyIsLeft(event.key) and direction==LEFT)):
         direction=STOPPED
 
 def updateDirection(event):
     global direction
-    if (event.key==K_LEFT or event.key==K_a): #support for both arrow keys and WASD controls.
+    if keyIsLeft(event.key): #support for both arrow keys and WASD controls.
         direction=LEFT
-    elif (event.key==K_RIGHT or event.key==K_d):
+    elif keyIsRight(event.key):
         direction=RIGHT
-    elif (event.key==K_UP or event.key==K_w):
+    elif keyIsUp(event.key):
         direction=UP
-    elif (event.key==K_DOWN or event.key==K_s):
+    elif keyIsDown(event.key):
         direction=DOWN
 
 
@@ -167,7 +191,7 @@ def controlShip():
         updateDirection(event)
         shootIfNeeded(event)
     for event in pygame.event.get(KEYUP):
-        nullifyDirectionIfNeeded(event)
+        stopShipIfNeeded(event)
 
 
 
