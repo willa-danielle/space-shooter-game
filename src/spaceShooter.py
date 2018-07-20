@@ -35,7 +35,7 @@ STOPPED="stopped"
 
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, shipXCoord, shipYCoord, direction, shipColor, enemyColor
+    global FPSCLOCK, DISPLAYSURF, shipXCoord, shipYCoord, vertDirection, horizDirection, shipColor, enemyColor
     global shipSpeed, shipBullets
     
     shipSpeed=4
@@ -45,7 +45,8 @@ def main():
 
     shipBullets=[]
 
-    direction = STOPPED
+    vertDirection  = STOPPED
+    horizDirection = STOPPED
 
     shipXCoord = int(WINDOWWIDTH/2) #initial ship position
     shipYCoord = WINDOWHEIGHT
@@ -105,19 +106,19 @@ def playGame():
 def updateShipPos():
     global shipXCoord, shipYCoord, shipSpeed, shipColor
     
-    if direction==LEFT:
+    if horizDirection==LEFT:
         shipXCoord=shipXCoord-shipSpeed #moves ship at given speed in proper direction
         if shipXCoord<SHIPWIDTH:    #failsafe to prevent going out of bounds
             shipXCoord=SHIPWIDTH
-    elif direction==RIGHT:
+    elif horizDirection==RIGHT:
         shipXCoord=shipXCoord+shipSpeed
         if shipXCoord>WINDOWWIDTH:
             shipXCoord=WINDOWWIDTH
-    elif direction==UP:
+    if vertDirection==UP:
         shipYCoord=shipYCoord-shipSpeed
         if shipYCoord<SHIPWIDTH:
             shipYCoord=SHIPWIDTH
-    elif direction==DOWN:
+    elif vertDirection==DOWN:
         shipYCoord=shipYCoord+shipSpeed
         if shipYCoord>WINDOWHEIGHT:
             shipYCoord=WINDOWHEIGHT
@@ -167,23 +168,24 @@ def keyIsDown(key):
         return False
 
 def stopShipIfNeeded(event):
-    global direction
-    if ((keyIsDown(event.key) and direction==DOWN) #if user presses a 2nd arrow before releasing 1st arrow, should not stop
-        or (keyIsUp(event.key) and direction==UP)
-        or (keyIsRight(event.key) and direction==RIGHT)
-        or (keyIsLeft(event.key) and direction==LEFT)):
-        direction=STOPPED
+    global vertDirection, horizDirection
+    if ((keyIsDown(event.key) and vertDirection==DOWN) #if user presses a 2nd arrow before releasing 1st arrow, should not stop
+        or (keyIsUp(event.key) and vertDirection==UP)):
+            vertDirection = STOPPED
+    if ((keyIsRight(event.key) and horizDirection==RIGHT)
+        or (keyIsLeft(event.key) and horizDirection==LEFT)):
+        horizDirection=STOPPED
 
 def updateDirection(event):
-    global direction
+    global vertDirection, horizDirection
     if keyIsLeft(event.key): #support for both arrow keys and WASD controls.
-        direction=LEFT
+        horizDirection=LEFT
     elif keyIsRight(event.key):
-        direction=RIGHT
+        horizDirection=RIGHT
     elif keyIsUp(event.key):
-        direction=UP
+        vertDirection=UP
     elif keyIsDown(event.key):
-        direction=DOWN
+        vertDirection=DOWN
 
 
 def controlShip():
