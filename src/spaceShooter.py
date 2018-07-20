@@ -143,8 +143,8 @@ def shootIfNeeded(event):
     if event.key==K_SPACE:
         shipBullets.append([locateShipGunX(), locateShipGunY()]) #adds a bullet in the appropriate coordinates on pressing spacebar
 
-def keyIsLeft(key):
-    if (key==K_LEFT or key==K_a):
+def keyIsLeft(key): 
+    if (key==K_LEFT or key==K_a): #support for both arrow keys and WASD controls.
         return True
     else:
         return False
@@ -178,7 +178,7 @@ def stopShipIfNeeded(event):
 
 def updateDirection(event):
     global vertDirection, horizDirection
-    if keyIsLeft(event.key): #support for both arrow keys and WASD controls.
+    if keyIsLeft(event.key): 
         horizDirection=LEFT
     elif keyIsRight(event.key):
         horizDirection=RIGHT
