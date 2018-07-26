@@ -33,6 +33,8 @@ UP="up"
 DOWN="down"
 STOPPED="stopped"
 
+#this variable is used to track whether the fire button is being held down at the current time.
+shipIsFiring=False
 
 def main():
     global FPSCLOCK, DISPLAYSURF, shipXCoord, shipYCoord, vertDirection, horizDirection, shipColor, enemyColor
@@ -87,7 +89,7 @@ def drawShipBullets():
 #------------------- game loop structure------------------------
 
 def playGame():
-    global shipColor
+    global shipColor, shipIsFiring
     
     while True:        
         checkForQuit()
@@ -99,6 +101,7 @@ def playGame():
         controlShip()
         updateShipPos()
         updateShipBulletPos()
+        shootIfNeeded()
         FPSCLOCK.tick(FPS)
         
 #----------------- position functions --------------------------
@@ -138,9 +141,14 @@ def locateShipGunY():
 
 #----------------- controls for ship ---------------------------
 
-def shootIfNeeded(event):
-    global shipBullets
+def toggleShipGunIfNeeded(event):
+    global shipIsFiring
     if event.key==K_SPACE:
+        shipIsFiring = not shipIsFiring
+
+def shootIfNeeded():
+    global shipBullets, shipIsFiring
+    if shipIsFiring:
         shipBullets.append([locateShipGunX(), locateShipGunY()]) #adds a bullet in the appropriate coordinates on pressing spacebar
 
 def keyIsLeft(key): 
@@ -191,9 +199,10 @@ def updateDirection(event):
 def controlShip():
     for event in pygame.event.get(KEYDOWN):
         updateDirection(event)
-        shootIfNeeded(event)
+        toggleShipGunIfNeeded(event)
     for event in pygame.event.get(KEYUP):
         stopShipIfNeeded(event)
+        toggleShipGunIfNeeded(event)
 
 
 
