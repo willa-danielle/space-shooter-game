@@ -33,8 +33,9 @@ UP="up"
 DOWN="down"
 STOPPED="stopped"
 
-#this variable is used to track whether the fire button is being held down at the current time.
+#variables controlling ship firing behavior
 shipIsFiring=False
+shipFireDelay=4
 
 def main():
     global FPSCLOCK, DISPLAYSURF, shipXCoord, shipYCoord, vertDirection, horizDirection, shipColor, enemyColor
@@ -89,8 +90,9 @@ def drawShipBullets():
 #------------------- game loop structure------------------------
 
 def playGame():
-    global shipColor, shipIsFiring
+    global shipColor, shipIsFiring, shipFireDelay
     
+    fireFrameNumber=0
     while True:        
         checkForQuit()
         DISPLAYSURF.fill(bgColor)
@@ -101,7 +103,11 @@ def playGame():
         controlShip()
         updateShipPos()
         updateShipBulletPos()
-        shootIfNeeded()
+        
+        if (fireFrameNumber==1):
+            shootIfNeeded()
+        fireFrameNumber=fireFrameNumber+1
+        fireFrameNumber=fireFrameNumber%shipFireDelay      
         FPSCLOCK.tick(FPS)
         
 #----------------- position functions --------------------------
@@ -145,6 +151,7 @@ def toggleShipGunIfNeeded(event):
     global shipIsFiring
     if event.key==K_SPACE:
         shipIsFiring = not shipIsFiring
+        shootIfNeeded() #ensures that regardless of firing rate, will shoot at least once.
 
 def shootIfNeeded():
     global shipBullets, shipIsFiring
