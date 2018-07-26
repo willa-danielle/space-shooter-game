@@ -1,10 +1,12 @@
 import pygame, sys
 from pygame.locals import *
+import random
 
 FPS = 30  #frames per second for the program
 WINDOWWIDTH = 400
 WINDOWHEIGHT = 500
 SHIPWIDTH = 20 #ship is represented as a square of width SHIPWIDTH
+STARWIDTH = 2 #stars are represented as tiny rectangles
 
 BULLETWIDTH = 2 #bullets are represented as tall thin rectangles.
 BULLETHEIGHT =8 
@@ -25,6 +27,7 @@ RED   = (255,0,  0  )
 
 bgColor = BLACK
 bulletColor = RED 
+starColor = WHITE
 
 #possible ship-direction values
 LEFT="left"
@@ -39,14 +42,17 @@ shipFireDelay=4
 
 def main():
     global FPSCLOCK, DISPLAYSURF, shipXCoord, shipYCoord, vertDirection, horizDirection, shipColor, enemyColor
-    global shipSpeed, shipBullets
+    global shipSpeed, shipBullets, scrollingSpeed, stars
     
     shipSpeed=4
+    scrollingSpeed=10
+
     pygame.init()
     shipColor = BLUE
     enemyColor = ORANGE
 
     shipBullets=[]
+    stars=[]
 
     vertDirection  = STOPPED
     horizDirection = STOPPED
@@ -75,7 +81,22 @@ def terminate():
     pygame.quit()
     sys.exit()
 
+#------------------- star creation in background ----------------
+
+def randomlyPlaceStars():
+    global stars
+    if (random.randrange(100) > 70):
+        stars.append([random.randrange(WINDOWWIDTH), 0])
+
+
+
 #------------------- drawing the game elements ------------------
+
+def drawStars():
+    global stars
+    for star in stars:
+        starRect = pygame.Rect(star[0], star[1], STARWIDTH, STARWIDTH)
+        pygame.draw.rect(DISPLAYSURF, starColor, starRect)
 
 def drawShip():
     shipRect = pygame.Rect(shipXCoord-SHIPWIDTH, shipYCoord-SHIPWIDTH, SHIPWIDTH, SHIPWIDTH)
@@ -97,12 +118,17 @@ def playGame():
         checkForQuit()
         DISPLAYSURF.fill(bgColor)
         
+        randomlyPlaceStars()
+
+        drawStars()
         drawShip()
         drawShipBullets()
+        
         pygame.display.update()
         controlShip()
         updateShipPos()
         updateShipBulletPos()
+        updateStarPos()
         
         if (fireFrameNumber==1):
             shootIfNeeded()
@@ -111,6 +137,13 @@ def playGame():
         FPSCLOCK.tick(FPS)
         
 #----------------- position functions --------------------------
+
+def updateStarPos(): #unrealistic idea in real world, but scrolling background stars give a sense of movement in game.
+    global stars
+    for star in stars:
+        star[1] = star[1]+scrollingSpeed
+        if star[1]>WINDOWHEIGHT:
+            stars.remove(star)
 
 def updateShipPos():
     global shipXCoord, shipYCoord, shipSpeed, shipColor
