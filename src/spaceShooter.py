@@ -136,7 +136,7 @@ def updateGameElements():
     fireFrameNumber=fireFrameNumber%shipFireDelay 
 
 def playGame():
-    global shipColor, fireFrameNumber, shipIsFiring, shipFireDelay
+    global fireFrameNumber
     
     fireFrameNumber=0
     initializeStars()
