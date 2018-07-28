@@ -115,31 +115,37 @@ def drawShipBullets():
 
 #------------------- game loop structure------------------------
 
+def drawGameElements():
+    drawStars()
+    drawShip()
+    drawShipBullets()
+
+def updateAllPositions():
+    updateShipPos()
+    updateShipBulletPos()
+    updateStarPos()
+
+def updateGameElements():
+    global shipIsFiring, shipFireDelay, fireFrameNumber
+    randomlyPlaceStars(0)
+    controlShip()
+    updateAllPositions()
+    if (fireFrameNumber==1):
+        shootIfNeeded()
+    fireFrameNumber=fireFrameNumber+1
+    fireFrameNumber=fireFrameNumber%shipFireDelay 
+
 def playGame():
-    global shipColor, shipIsFiring, shipFireDelay
+    global shipColor, fireFrameNumber, shipIsFiring, shipFireDelay
     
     fireFrameNumber=0
     initializeStars()
     while True:        
         checkForQuit()
         DISPLAYSURF.fill(bgColor)
-        
-        randomlyPlaceStars(0)
-
-        drawStars()
-        drawShip()
-        drawShipBullets()
-        
+        updateGameElements()
+        drawGameElements()   
         pygame.display.update()
-        controlShip()
-        updateShipPos()
-        updateShipBulletPos()
-        updateStarPos()
-        
-        if (fireFrameNumber==1):
-            shootIfNeeded()
-        fireFrameNumber=fireFrameNumber+1
-        fireFrameNumber=fireFrameNumber%shipFireDelay      
         FPSCLOCK.tick(FPS)
         
 #----------------- position functions --------------------------
