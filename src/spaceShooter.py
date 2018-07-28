@@ -44,7 +44,7 @@ def main():
     global FPSCLOCK, DISPLAYSURF, shipXCoord, shipYCoord, vertDirection, horizDirection, shipColor, enemyColor
     global shipSpeed, shipBullets, scrollingSpeed, stars
     
-    shipSpeed=4
+    shipSpeed=6
     scrollingSpeed=10
 
     pygame.init()
@@ -83,10 +83,15 @@ def terminate():
 
 #------------------- star creation in background ----------------
 
-def randomlyPlaceStars():
+def initializeStars():
+    for verticalLevel in range(0,WINDOWHEIGHT,scrollingSpeed):
+        randomlyPlaceStars(verticalLevel)
+
+def randomlyPlaceStars(verticalLevel):
     global stars
-    if (random.randrange(100) > 70):
-        stars.append([random.randrange(WINDOWWIDTH), 0])
+    starProbability=70
+    if (random.randrange(100) > starProbability):
+        stars.append([random.randrange(WINDOWWIDTH), verticalLevel])
 
 
 
@@ -114,11 +119,12 @@ def playGame():
     global shipColor, shipIsFiring, shipFireDelay
     
     fireFrameNumber=0
+    initializeStars()
     while True:        
         checkForQuit()
         DISPLAYSURF.fill(bgColor)
         
-        randomlyPlaceStars()
+        randomlyPlaceStars(0)
 
         drawStars()
         drawShip()
